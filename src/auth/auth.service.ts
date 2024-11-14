@@ -4,7 +4,7 @@ import { UsersRepository } from 'src/users/user.repository';
 import { LoginUserDto } from './dto/loginUser.dto';
 import { Users } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +12,7 @@ export class AuthService {
     constructor(
         private readonly usersRepository: UsersRepository,
         private readonly configService: ConfigService,
+        private readonly jwtService: JwtService,
 
     ) {}
 
@@ -27,9 +28,7 @@ export class AuthService {
        */
       private generateToken(user: Users) {
         const payload = { email: user.email, id: user.id };
-        return jwt.sign(payload, this.configService.getOrThrow('JWT_SECRET'), {
-          expiresIn: this.configService.get('JWT_EXPIRATION_TIME'),
-        });
+        return this.jwtService.sign(payload);
       }
 
      /**
@@ -44,6 +43,7 @@ export class AuthService {
     const user = await this.findUserByEmail(email);
 
     if (!user) throw new UnauthorizedException('Invalid credentials');
+
 
     const isPasswordMatching = await bcrypt.compare(password, user.password);
     if (!isPasswordMatching)
