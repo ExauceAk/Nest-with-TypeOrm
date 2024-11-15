@@ -67,7 +67,7 @@ export class AuthService {
 
     if (user) throw new UnauthorizedException('Email already in use');
 
-    const userNameCheck = await this.findUserByEmail(username);
+    const userNameCheck = await this.usersRepository.findOne({ where: { username } });
 
     if (userNameCheck) throw new UnauthorizedException('UserName already in use');
    
