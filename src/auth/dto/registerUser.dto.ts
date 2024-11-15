@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsStrongPassword } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, IsStrongPassword } from 'class-validator';
 // import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterUserDto {
@@ -25,13 +25,16 @@ export class RegisterUserDto {
 
   // @ApiProperty()
   @IsNotEmpty({ message: 'confirm password is required' })
+  @IsString()
   firstName: string;
 
   // @ApiProperty()
   @IsNotEmpty({ message: 'confirm password is required' })
+  @IsString()
   lastName: string;
 
   // @ApiProperty()
   @IsNotEmpty({ message: 'username is required' })
+  @IsString()
   username: string;
 }
