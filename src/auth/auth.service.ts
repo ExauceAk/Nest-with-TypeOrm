@@ -40,7 +40,7 @@ export class AuthService {
   */
   async login(
     loginUserDto: LoginUserDto,
-  ): Promise<{ user: Users; token: string }> {
+  ): Promise<{ token: string }> {
     const { email, password } = loginUserDto;
     const user = await this.findUserByEmail(email);
 
@@ -51,7 +51,7 @@ export class AuthService {
     if (!isPasswordMatching)
       throw new UnauthorizedException('Invalid credentials');
     const token = this.generateToken(user);
-    return { user, token };
+    return { token };
   }
 
 
@@ -62,7 +62,7 @@ export class AuthService {
   */
    async register(
     registerUserDto: RegisterUserDto,
-  ): Promise< Users> {
+  ): Promise< string > {
     const { email, password , firstName, lastName, username , referralCode } = registerUserDto;
     const user = await this.findUserByEmail(email);
 
@@ -89,11 +89,22 @@ export class AuthService {
     newUser.referralCode = myReferralCode;
     newUser.sponsor = referralCodeCheck;
 
-    return await this.usersRepository.save(newUser);
+    const userSaved = await this.usersRepository.save(newUser);
 
-  
+    return userSaved.username;
   }
 
- 
+  async getMe(id: string) {
+    const user = await this.usersRepository.findOne({ where: { id } , 
+      select: ['id', 'firstName', 'lastName', 'email', 'username', 'points', 'referralCode', 'sponsor'] });
+    return user;
+  }
 
+  async getMyReferral(id: string) {
+    const user = await this.usersRepository.findOne({where: {id}});
+
+    const users = await this.usersRepository.find({ where: { sponsor: {id : id} } , 
+      select: [ 'username', 'points', 'sponsor'] });
+    return users;
+  }
 }

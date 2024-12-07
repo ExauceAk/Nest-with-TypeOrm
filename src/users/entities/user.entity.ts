@@ -1,6 +1,7 @@
 import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 import { AbstractEntity } from 'libs/common/src/database';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Users extends AbstractEntity<Users> {
@@ -17,6 +18,7 @@ export class Users extends AbstractEntity<Users> {
   username: string;
 
   @Column({ nullable: false })
+  @Exclude()
   password: string;
 
   @Column({ nullable: false , default: 0 })
