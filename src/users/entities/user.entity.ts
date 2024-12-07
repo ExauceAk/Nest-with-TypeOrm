@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
 
 import { AbstractEntity } from 'libs/common/src/database';
 import { Exclude } from 'class-transformer';
+import { Point } from 'src/points/entities/point.entity';
 
 @Entity()
 export class Users extends AbstractEntity<Users> {
@@ -35,4 +36,7 @@ export class Users extends AbstractEntity<Users> {
    // Les utilisateurs parrainés par cet utilisateur
    @OneToMany(() => Users, (user) => user.sponsor)
    referredUsers: Users[];
+
+  //  @OneToMany(() => Point, (point) => point.user)
+  //   points: Point[];
 }
