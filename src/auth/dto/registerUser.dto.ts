@@ -15,10 +15,12 @@ export class RegisterUserDto {
     {
       minLength: 6,
       minNumbers: 1,
-      minUppercase: 1,
+      minUppercase: 0,
+      minLowercase: 0,
+      minSymbols: 0, // Désactive la validation des caractères spéciaux
     },
     {
-      message: `Password is not strong enough. Must contain: 6 characters, 1 number, 1 uppercase letter`,
+      message: `Password is not strong enough. Must contain: 6 characters, 1 number`,
     },
   )
   password: string;
@@ -28,11 +30,18 @@ export class RegisterUserDto {
   @IsString()
   firstName: string;
 
+
   // @ApiProperty()
   @IsNotEmpty({ message: 'confirm password is required' })
   @IsString()
   lastName: string;
 
+
+     // @ApiProperty()
+     @IsNotEmpty({ message: 'referral code is required' })
+     @IsString()
+     referralCode: string;
+  
   // @ApiProperty()
   @IsNotEmpty({ message: 'username is required' })
   @IsString()

@@ -6,6 +6,7 @@ import { Users } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterUserDto } from './dto/registerUser.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
@@ -62,7 +63,7 @@ export class AuthService {
    async register(
     registerUserDto: RegisterUserDto,
   ): Promise< Users> {
-    const { email, password , firstName, lastName, username } = registerUserDto;
+    const { email, password , firstName, lastName, username , referralCode } = registerUserDto;
     const user = await this.findUserByEmail(email);
 
     if (user) throw new UnauthorizedException('Email already in use');
@@ -73,12 +74,20 @@ export class AuthService {
    
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const  myReferralCode = uuidv4().split('-')[0].toUpperCase();
+
+    const referralCodeCheck = await this.usersRepository.findOne({ where: { referralCode } });
+
+    if (!referralCodeCheck) throw new UnauthorizedException('Referral code not exist');
+
     const newUser =  new Users({});
     newUser.email = email;
     newUser.password = hashedPassword;
     newUser.firstName = firstName;
     newUser.lastName = lastName;
     newUser.username = username;
+    newUser.referralCode = myReferralCode;
+    newUser.sponsor = referralCodeCheck;
 
     return await this.usersRepository.save(newUser);
 
